@@ -1,5 +1,16 @@
 package me.jansv.challenge.ui.screens.users;
 
+import static android.content.ContentValues.TAG;
+
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import io.reactivex.Observer;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import me.jansv.challenge.api.GithubService;
 import me.jansv.challenge.model.UserList;
 import retrofit2.Call;
@@ -29,7 +40,36 @@ public class UsersPresenter implements UsersContract.Presenter {
     @Override
     public void fetchUserList() {
         final String filter = "language:java location:lagos";
-        api.getUserList(filter).enqueue(new Callback<UserList>() {
+        api.getUserList(filter)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<UserList>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable disposable) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull UserList userList) {
+                        if(!mView.isActive())
+                            return;
+                            mView.showUserList(userList.getItems());
+                            Log.e(TAG, userList.getItems().toString());
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable throwable) {
+                        if (mView.isActive()) {
+                            mView.showNetworkErrorMessage();
+                        }
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+                /*.enqueue(new Callback<UserList>() {
             @Override
             public void onResponse(Call<UserList> call, Response<UserList> response) {
                 if(!mView.isActive())
@@ -47,6 +87,6 @@ public class UsersPresenter implements UsersContract.Presenter {
                     mView.showNetworkErrorMessage();
                 }
             }
-        });
+        });*/
     }
 }

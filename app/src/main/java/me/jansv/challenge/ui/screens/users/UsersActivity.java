@@ -33,6 +33,7 @@ import me.jansv.challenge.model.User;
 import me.jansv.challenge.network.NetworkManager;
 import me.jansv.challenge.ui.screens.repos.ReposActivity;
 import me.jansv.challenge.util.schedulers.SchedulerProvider;
+import retrofit2.http.HTTP;
 
 public class UsersActivity extends AppCompatActivity implements UsersContract.View {
 
@@ -81,8 +82,8 @@ public class UsersActivity extends AppCompatActivity implements UsersContract.Vi
         mPresenter.bind(this);
 
         // this call is totally optional, you can without any damage comment it and uncomment the below one
-        //fetchUsersWhenReady();
-        mPresenter.fetchUserList();
+        fetchUsersWhenReady();
+        //mPresenter.fetchUserList();
     }
 
     @Override
@@ -118,7 +119,7 @@ public class UsersActivity extends AppCompatActivity implements UsersContract.Vi
 
     @Override
     public void showUserList(List<User> users) {
-        userList.setAdapter(new UsersAdapter(users));
+        userList.setAdapter(new UsersAdapter(users, this));
     }
 
     @Override
@@ -153,10 +154,14 @@ public class UsersActivity extends AppCompatActivity implements UsersContract.Vi
     }
 
     public void listadoRepositorios(View v){
-        Intent intent = new Intent(v.getContext(), ReposActivity.class);
-        startActivity(intent);
+        /*Intent intent = new Intent(v.getContext(), ReposActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_USER_PATH, "");
+        startActivity(intent);*/
 
     }
+
+
     private void scheduleForTitleChange() {
         final boolean delayTitleChange = getResources().getBoolean(R.bool.allowsDelayedTitleChange);
 

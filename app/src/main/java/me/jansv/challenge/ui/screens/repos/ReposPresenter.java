@@ -1,7 +1,14 @@
 package me.jansv.challenge.ui.screens.repos;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
+import io.reactivex.Observer;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import me.jansv.challenge.api.GithubService;
 import me.jansv.challenge.model.Root;
 import me.jansv.challenge.model.UserList;
@@ -33,7 +40,34 @@ public class ReposPresenter implements ReposContract.Presenter{
     @Override
     public void fetchReposList(String path) {
         //final String path = "";
-        api.getRepository(path).enqueue(new Callback<List<Root>>() {
+        api.getRepository(path)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<List<Root>>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable disposable) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull List<Root> root) {
+                        if(!mView.isActive())
+                            return;
+                            mView.showReposList(root);
+
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable throwable) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+                /*.enqueue(new Callback<List<Root>>() {
             @Override
             public void onResponse(Call<List<Root>> call, Response<List<Root>> response) {
                 if(!mView.isActive())
@@ -51,6 +85,6 @@ public class ReposPresenter implements ReposContract.Presenter{
                     mView.showNetworkErrorMessage();
                 }
             }
-        });
+        });*/
     }
 }

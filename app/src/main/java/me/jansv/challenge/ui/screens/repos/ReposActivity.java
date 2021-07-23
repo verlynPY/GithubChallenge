@@ -1,5 +1,8 @@
 package me.jansv.challenge.ui.screens.repos;
 
+
+import static me.jansv.challenge.util.Constants.KEY_USER_PATH;
+
 import android.os.Bundle;
 import android.view.View;
 
@@ -77,7 +80,9 @@ public class ReposActivity extends AppCompatActivity implements ReposContract.Vi
 
         // this call is totally optional, you can without any damage comment it and uncomment the below one
         //fetchUsersWhenReady();
-        mPresenter.fetchReposList("moyheen");
+        Bundle bundle = getIntent().getExtras();
+        String USER_PATH = bundle.getString(KEY_USER_PATH);
+        mPresenter.fetchReposList(USER_PATH);
     }
 
     @Override
@@ -91,7 +96,7 @@ public class ReposActivity extends AppCompatActivity implements ReposContract.Vi
 
     private void setupViews() {
         reposList.setHasFixedSize(true);
-        reposList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
+        reposList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 1));
     }
 
     @Override
